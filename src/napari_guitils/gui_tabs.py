@@ -24,4 +24,30 @@ def create_tabs(tab_names, main_layout):
         t_widget.setLayout(t_layout)
         tabs.addTab(t_widget, t_name)
     
-    main_layout.addWidget(tabs)
+    #main_layout.addWidget(tabs)
+    return tabs
+
+class VHGroup():
+    """Group box with specific layout.
+
+    Parameters
+    ----------
+    name: str
+        Name of the group box
+    orientation: str
+        'V' for vertical, 'H' for horizontal, 'G' for grid
+    """
+
+    def __init__(self, name, orientation='V'):
+        self.gbox = QGroupBox(name)
+        if orientation=='V':
+            self.glayout = QVBoxLayout()
+        elif orientation=='H':
+            self.glayout = QHBoxLayout()
+        elif orientation=='G':
+            self.glayout = QGridLayout()
+        else:
+            raise Exception(f"Unknown orientation {orientation}") 
+
+        self.gbox.setLayout(self.glayout)
+
