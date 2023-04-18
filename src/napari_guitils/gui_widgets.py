@@ -1,6 +1,5 @@
 
 
-import shutil
 import os
 from pathlib import Path
 from qtpy.QtWidgets import QListWidget
