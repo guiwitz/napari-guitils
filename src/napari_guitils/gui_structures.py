@@ -26,7 +26,7 @@ class TabSet(QTabWidget):
             t_widget.setLayout(t_layout)
             self.addTab(t_widget, t_name)
 
-    def add_named_tab(self, tab_name, widget):
+    def add_named_tab(self, tab_name, widget, grid_pos=None):
         """Add a widget to a named tab.
         
         Parameters
@@ -35,10 +35,14 @@ class TabSet(QTabWidget):
             The name of the tab to add the widget to.
         widget : QWidget
             The widget to add to the tab.
+        grid_pos : tuple of four int, optional for grid layout
 
         """
         
-        self.widget(self.tab_names.index(tab_name)).layout().addWidget(widget)
+        if grid_pos is not None:
+            self.widget(self.tab_names.index(tab_name)).layout().addWidget(widget, *grid_pos)
+        else:
+            self.widget(self.tab_names.index(tab_name)).layout().addWidget(widget)
 
 
 def create_tabs(tab_names, tab_layouts=None):
