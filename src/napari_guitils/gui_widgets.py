@@ -8,8 +8,21 @@ from natsort import natsorted
 
 
 class FolderList(QListWidget):
-    # be able to pass the Napari viewer name (viewer)
-    def __init__(self, viewer, parent=None):
+    """
+    A QListWidget that displays the files in a folder.
+    
+    Parameters
+    ----------
+    viewer : napari.Viewer
+        The napari viewer.
+    file_extensions : list of str
+        The file extensions to display.
+    parent : QWidget
+        The parent widget.
+    
+    """
+
+    def __init__(self, viewer, file_extensions=None, parent=None):
         super().__init__(parent)
 
         self.viewer = viewer
@@ -17,6 +30,7 @@ class FolderList(QListWidget):
         self.setDragEnabled(True)
 
         self.folder_path = None
+        self.file_extensions = file_extensions
 
 
     def dragEnterEvent(self, event):
@@ -52,8 +66,17 @@ class FolderList(QListWidget):
         self.folder_path = path
         files = os.listdir(self.folder_path)
         files = natsorted(files)
+
+        if self.file_extensions is None:
+            file_extensions = [Path(f).suffix for f in files]
+        else:
+            file_extensions = self.file_extensions
         for f in files:
-            if (f[0] != '.') and (self.folder_path.joinpath(f).is_file()) and (Path(f).suffix in ['.hdr', '.tiff']):
+            if (
+                (f[0] != '.') 
+                and (self.folder_path.joinpath(f).is_file())
+                and (Path(f).suffix in file_extensions)
+            ):
                 self.addItem(f)
     
     def addFileEvent(self):
