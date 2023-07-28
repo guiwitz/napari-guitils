@@ -26,7 +26,14 @@ source = "vcs"
 # extras
 # https://peps.python.org/pep-0621/#dependencies-optional-dependencies
 [project.optional-dependencies]
-test = ["pytest>=6.0"]
+test = [
+    "tox", 
+    "pytest", 
+    "pytest-cov", 
+    "pytest-qt", 
+    "napari",
+    "pyqt5"
+]
 
 [project.urls]
 homepage = "https://github.com/guiwitz/napari-guitils"
