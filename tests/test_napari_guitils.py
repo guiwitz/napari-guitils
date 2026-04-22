@@ -1,6 +1,6 @@
 from napari_guitils.gui_widgets import FolderList
 from napari_guitils.gui_structures import TabSet
-from qtpy.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QScrollArea
+from qtpy.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QScrollArea, QTabWidget
 from pathlib import Path
 
 def test_folderlist_one_extension(make_napari_viewer):
