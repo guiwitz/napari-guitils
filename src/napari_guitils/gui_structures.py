@@ -1,5 +1,7 @@
 from qtpy.QtWidgets import (QTabWidget, QWidget, QVBoxLayout,
-                            QHBoxLayout, QGridLayout, QGroupBox)
+                            QHBoxLayout, QGridLayout, QGroupBox,
+                            QScrollArea)
+from qtpy.QtCore import Qt
 
 
 class TabSet(QTabWidget):
@@ -11,9 +13,13 @@ class TabSet(QTabWidget):
         The names of the tabs to create.
     tab_layouts : list of layouts, optional
         box layouts to use e.g QVBoxLayout, QHBoxLayout, QGridLayout, optional
+    scrollable : bool or list of bool, optional
+        If True or a list of True values, wraps each tab in a vertical scroll
+        area. Can be a single bool to apply to all tabs, or a list of bools
+        with one entry per tab.
 
     """
-    def __init__(self, tab_names, tab_layouts=None):
+    def __init__(self, tab_names, tab_layouts=None, scrollable=False):
         super().__init__()
 
         self.tab_names = tab_names
@@ -21,10 +27,27 @@ class TabSet(QTabWidget):
         if tab_layouts is None:
             tab_layouts = [None for _ in tab_names]
         tab_layouts = [QVBoxLayout() if tl is None else tl for tl in tab_layouts]
+        if isinstance(scrollable, bool):
+            scrollable = [scrollable for _ in tab_names]
         
-        for t_layout, t_widget, t_name in zip(tab_layouts, tab_widgets, tab_names):
+        for t_layout, t_widget, t_name, t_scroll in zip(tab_layouts, tab_widgets, tab_names, scrollable):
             t_widget.setLayout(t_layout)
-            self.addTab(t_widget, t_name)
+            if t_scroll:
+                scroll = QScrollArea()
+                scroll.setWidget(t_widget)
+                scroll.setWidgetResizable(True)
+                scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+                scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+                self.addTab(scroll, t_name)
+            else:
+                self.addTab(t_widget, t_name)
+
+    def widget(self, index):
+        """Return the content widget for the tab at index, unwrapping any scroll area."""
+        w = super().widget(index)
+        if isinstance(w, QScrollArea):
+            return w.widget()
+        return w
 
     def add_named_tab(self, tab_name, widget, grid_pos=None):
         """Add a widget to a named tab.
@@ -38,7 +61,6 @@ class TabSet(QTabWidget):
         grid_pos : tuple of four int, optional for grid layout
 
         """
-        
         if grid_pos is not None:
             self.widget(self.tab_names.index(tab_name)).layout().addWidget(widget, *grid_pos)
         else:
